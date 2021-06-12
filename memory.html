@@ -1,0 +1,82 @@
+<html>
+  <head>
+    <title>神経衰弱</title>
+    <script type="text/javascript">
+      var num = 7; //カードの枚数
+      var startFlag = 0;
+      var clickcount = 0;
+      var correctcount = 0;
+      var pic = new Array("img0.png","img0.png","img1.png","img1.png","img2.png","img2.png","img3.png","img3.png",);
+      var record = new Array(2);
+
+      function cardopen(n){
+        if(startFlag == 0){
+          pic = shuffle(num);
+          startFlag = 1;
+        }
+        if(clickcount < 2){
+          document.images[n].src = pic[n];
+          record[clickcount] = n;
+          if(clickcount == 1){
+            if(pic[record[0]] != pic[record[1]]){
+              window.setTimeout(cardsclose,500);
+            }else{
+              correctcount++;
+
+              if(correctcount == 4){
+                document.images["claer"].src = "clear.png";
+              }else{
+                document.images["good"].src = "good.png";
+                window.setTimeout(unvisible,700);
+              }
+            }
+          }
+          clickcount++;
+        }else{
+          document.images[n].src = pic[n];
+          record[0] = n;
+          clickcount = 1;
+        }
+
+      }
+
+      function cardsclose(){
+        document.images[record[0]].src = "ura.png";
+        document.images[record[1]].src = "ura.png";
+      }
+
+      function unvisible(){
+        document.images["good"].src = "nothing.png";
+      }
+
+      function shuffle(num){
+        for(i = pic.length-1; i > 0; i--){
+          var x = Math.floor(Math.random()*(i+1)); //0~iの整数の乱数
+          var tmp = pic[i];
+          pic[i] = pic[x];
+          pic[x] = tmp;
+        }
+        return pic;
+      }
+
+    </script>
+  </head>
+  <body bgcolor = "#FFFF99">
+
+    <div align = center>
+
+    <form name = "cards">
+      <img src="ura.png" name="0" onclick = cardopen(name) style="position:absolute;left:0;top:0">
+      <img src="ura.png" name="1" onclick = cardopen(name) style="position:absolute;left:200;top:0">
+      <img src="ura.png" name="2" onclick = cardopen(name) style="position:absolute;left:400;top:0">
+      <img src="ura.png" name="3" onclick = cardopen(name) style="position:absolute;left:600;top:0">
+      <img src="ura.png" name="4" onclick = cardopen(name) style="position:absolute;left:0;top:200">
+      <img src="ura.png" name="5" onclick = cardopen(name) style="position:absolute;left:200;top:200">
+      <img src="ura.png" name="6" onclick = cardopen(name) style="position:absolute;left:400;top:200">
+      <img src="ura.png" name="7" onclick = cardopen(name) style="position:absolute;left:600;top:200">
+    </form>
+    <img src="nothing.png" name="good" style="position:absolute;left:200;top:400">
+    <img src="nothing.png" name="claer" style="position:absolute;left:0;top:400">
+    </div>
+  </body>
+</html>
