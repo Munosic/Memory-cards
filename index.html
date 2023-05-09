@@ -1,20 +1,94 @@
 <html>
   <head>
-    <title>スタート画面</title>
+    <title>神経衰弱</title>
     <script type="text/javascript">
-    var c = 20;
-    var sc = 0;
-    var switchcount = 0;
-    var max;
-    function pmove(){
-     window.location.replace("memory.html","新ウィンドウ", "width=800, height=600");
-    }
+      var startFlag = 1; //スタートした直後かどうか
+      var clickcount = 0; //カードをクリックした回数
+      var correctcount = 0; //正解した回数
+      var pic = new Array("img/img0.png","img/img0.png","img/img1.png","img/img1.png","img/img2.png","img/img2.png","img/img3.png","img/img3.png",); //カードの画像を格納
+      var record = new Array(2); //開いた2枚の画像を記録
+
+      /*カードを表にする*/
+      function cardopen(n){
+        if(startFlag == 1){ //スタート直後だったら
+          pic = shuffle(); //カードをシャッフルし、配列picを更新
+          startFlag = 0; //スタートフラグを0にする
+        }
+        if(clickcount < 2){ //二枚以下表にしている状態ならば
+          document.images[n].src = pic[n]; //クリックした画像のところに伏せている画像を表示
+          record[clickcount] = n; //クリックした２枚分を一枚ずつ記録
+          if(clickcount == 1){ //2枚目をクリックした時、
+            if(pic[record[0]] != pic[record[1]]){ //表にした二枚が異なった場合、
+              window.setTimeout(cardsclose,500); //二枚を0.5秒後に裏返す
+            }else{ //一致していた場合
+              correctcount++; //正解した回数を増やす
+
+              if(correctcount == 4){ //全部正解した場合
+                document.images["claer"].src = "img/clear.png"; //花吹雪の画像を表示
+              }else{ //そうでない時
+                document.images["good"].src = "img/good.png"; //グッドのイラストを表示
+                window.setTimeout(unvisible,700); //0.7秒後に非表示にする
+              }
+            }
+          }
+          clickcount++; //表に返した枚数を増やす
+        }else{ //2枚以上クリックした時、
+          document.images[n].src = pic[n]; //クリックした画像を表にする
+          record[0] = n; //クリックしたカード番号を記録
+          clickcount = 1; //一枚表にしたと更新
+        }
+
+      }
+
+      /*クリックした二枚のカードを裏返す*/
+      function cardsclose(){
+        document.images[record[0]].src = "img/ura.png";
+        document.images[record[1]].src = "img/ura.png";
+      }
+
+      /*グッドのイラストに何もない画像を表示させて、非表示にする*/
+      function unvisible(){
+        document.images["good"].src = "img/nothing.png";
+      }
+
+      /*カードをシャッフルする*/
+      function shuffle(){
+        /*picを枚数を一つずつ減らしてswapする*/
+        for(i = pic.length-1; i > 0; i--){
+          var x = Math.floor(Math.random()*(i+1)); //0~iの整数の乱数
+          var tmp = pic[i];
+          pic[i] = pic[x];
+          pic[x] = tmp;
+        }
+        return pic; //シャッフルした配列picを返す
+      }
+
+      /*もう一度同じウィンドウで最初からやり直す*/
+      function rewindow(){
+        window.location.replace("memory.html");
+      }
     </script>
   </head>
-  <body　bgcolor = "#FFFF99">
+  <body bgcolor = "#FFFF99"><!--背景を設定-->
+
     <div align = center>
-      <h1>ようこそ！</h1>
-    <input type="button" name="start" value="スタート" onclick = "pmove()" style="width:100px; height: 50px; font-size:20px;">
-  </div>
+
+    <form name = "cards">
+      <!--画像を裏の画像にして8枚配置-->
+      <img src="img/ura.png" name="0" onclick = cardopen(name) style="position:absolute;left:0;top:0">
+      <img src="img/ura.png" name="1" onclick = cardopen(name) style="position:absolute;left:200;top:0">
+      <img src="img/ura.png" name="2" onclick = cardopen(name) style="position:absolute;left:400;top:0">
+      <img src="img/ura.png" name="3" onclick = cardopen(name) style="position:absolute;left:600;top:0">
+      <img src="img/ura.png" name="4" onclick = cardopen(name) style="position:absolute;left:0;top:200">
+      <img src="img/ura.png" name="5" onclick = cardopen(name) style="position:absolute;left:200;top:200">
+      <img src="img/ura.png" name="6" onclick = cardopen(name) style="position:absolute;left:400;top:200">
+      <img src="img/ura.png" name="7" onclick = cardopen(name) style="position:absolute;left:600;top:200">
+    </form>
+    <!--非表示状態に見える画像を配置-->
+    <img src="img/nothing.png" name="good" style="position:absolute;left:200;top:400">
+    <img src="img/nothing.png" name="claer" style="position:absolute;left:0;top:400">
+    <!--やり直し画像-->
+    <img src="img/restart.png" name="restart" onclick = rewindow() style="position:absolute;left:350;top:600">
+    </div>
   </body>
 </html>
